@@ -17,7 +17,7 @@ public class OpenWeatherMapAPI{
      * @throws IOException if an I/O error occurs
      */
     public OpenWeatherMapAPI(String city) throws IOException{
-        API_KEY = "YOUR_API_KEY"; // Get your API key from https://openweathermap.org/api
+        API_KEY = "6bacb232a0f59d0ec64765b01657a03e"; // Get your API key from https://openweathermap.org/api
         API_URL = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+API_KEY+"&units=metric";
         
         URL weatherUrl = new URL(API_URL);
@@ -67,16 +67,6 @@ public class OpenWeatherMapAPI{
 
     public double getWindDirection(){
         return weatherData.getJSONObject("wind").getDouble("deg");
-    }
-
-
-    public long getSunriseTime(){
-        return weatherData.getJSONObject("sys").getLong("sunrise");
-    }
-
-
-    public long getSunsetTime(){
-        return weatherData.getJSONObject("sys").getLong("sunset");
     }
 
 

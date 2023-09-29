@@ -1,15 +1,15 @@
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.io.IOException;
+import java.net.URISyntaxException;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 public class Main extends JFrame {
 
@@ -52,6 +52,13 @@ public class Main extends JFrame {
         visibilityLabel = new JLabel();
         visibilityLabel.setFont(new Font("Arial", Font.PLAIN, 17));
 
+        cityField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                submitButton.doClick();
+            }
+        });
+
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -71,6 +78,8 @@ public class Main extends JFrame {
 
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null, "An error occurred while retrieving weather data.");
+                } catch (URISyntaxException ex) {
+                    JOptionPane.showMessageDialog(null, "An error occurred while creating the URL.");
                 }
             }
         });

@@ -4,29 +4,29 @@ This is a simple Java application that uses the OpenWeatherMap API to fetch and 
 
 ## Prerequisites
 
-- Java 20 or later
-- json.jar (Java JSON library)
 
-## Installation
+1. `json.jar` library for JSON parsing. You can download it from [here](https://jar-download.com/artifacts/org.json/json/20140107/source-code) and add it to your project as a library.
 
-1. **Install Java**: Make sure you have Java installed on your system. If not, you can download it from the official Oracle website.
+## How to Use
 
-2. **Download json.jar**: This project uses the Java JSON library to parse JSON data. You can download `json.jar` from here. 
+1. Clone or download this repository to your local machine.
+2. Open the project in your preferred Java development environment.
+3. Add the `json.jar` library to the project.
+4. Compile and run the `Main.java` file to launch the application.
 
-## Usage
+## How It Works
 
-1. **Add json.jar to your classpath**: After downloading `json.jar`, add it to your classpath. If you're using an IDE like Eclipse or IntelliJ, you can do this in the project settings. If you're compiling from the command line, you can use the `-cp` option followed by the path to `json.jar`.
+The application makes use of the OpenWeatherMap API to fetch weather data for the specified city.
 
-2. **Compile and Run**: Compile the `Main.java` and `OpenWeatherMapAPI.java` files and run the `Main` class. You can do this in your IDE or from the command line using the `javac` and `java` commands.
+## Dependencies
 
-3. **Enter a City Name**: Once the application is running, enter the name of a city in the text field and press Enter or click Submit. The application will display various weather parameters for that city.
+- `json.jar`: This library is used for JSON parsing in the `OpenWeatherMapAPI.java` file.
 
-Please note that city names with spaces should be entered without any special characters (for example, use "newyork" instead of "new york").
+## Acknowledgments
 
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+- This application was created for educational purposes and as a demonstration of Java Swing and API integration.
+- OpenWeatherMap API: [https://openweathermap.org/api](https://openweathermap.org/api)
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

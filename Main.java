@@ -76,6 +76,8 @@ public class Main extends JFrame {
         clockLabel = new JLabel();
         clockLabel.setHorizontalAlignment(SwingConstants.CENTER);
         clockLabel.setFont(new Font("Arial", Font.PLAIN, 24));
+        clockLabel.setForeground(Color.WHITE);
+        mainPanel.setBackground(Color.gray);
         mainPanel.add(clockLabel, BorderLayout.SOUTH);
 
         submitButton.addActionListener(this::fetchData);
@@ -90,6 +92,7 @@ public class Main extends JFrame {
     private void toggleUnits(ActionEvent e) {
         useMetricUnits = !useMetricUnits;
         unitToggle.setText(useMetricUnits ? "Metric Units" : "Imperial Units");
+        fetchData(e);
     }
 
     private void fetchData(ActionEvent e) {

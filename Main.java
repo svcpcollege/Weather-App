@@ -2,7 +2,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
@@ -22,7 +21,6 @@ import javax.swing.SwingWorker;
 import javax.swing.Timer;
 
 public class Main extends JFrame {
-
     private JTextField cityField;
     private JButton submitButton;
     private JLabel loadingLabel;
@@ -30,7 +28,7 @@ public class Main extends JFrame {
     private JToggleButton unitToggle;
     private JLabel clockLabel;
 
-    private boolean useMetricUnits = true; // Use metric units by default
+    private boolean useMetricUnits = true;
 
     public Main() {
         createUI();
@@ -58,7 +56,6 @@ public class Main extends JFrame {
         inputPanel.add(submitButton);
         inputPanel.add(loadingLabel);
 
-        // Create a toggle button for units
         unitToggle = new JToggleButton("Use Metric Units");
         unitToggle.addActionListener(this::toggleUnits);
         inputPanel.add(unitToggle);
@@ -74,7 +71,6 @@ public class Main extends JFrame {
         }
         mainPanel.add(weatherInfoPanel, BorderLayout.CENTER);
 
-        // Create and add the clock label
         clockLabel = new JLabel();
         mainPanel.add(clockLabel, BorderLayout.SOUTH);
 
@@ -83,23 +79,13 @@ public class Main extends JFrame {
 
         add(mainPanel);
 
-        // Create and start the timer for the clock
-        Timer timer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateClock();
-            }
-        });
+        Timer timer = new Timer(1000, e -> updateClock());
         timer.start();
     }
 
     private void toggleUnits(ActionEvent e) {
         useMetricUnits = !useMetricUnits;
-        if (useMetricUnits) {
-            unitToggle.setText("Use Metric Units");
-        } else {
-            unitToggle.setText("Use Imperial Units");
-        }
+        unitToggle.setText(useMetricUnits ? "Use Metric Units" : "Use Imperial Units");
     }
 
     private void fetchData(ActionEvent e) {
@@ -119,8 +105,8 @@ public class Main extends JFrame {
                                 "Max Temperature: " + formatTemperature(weather.getMaxTemperature()) + "°",
                                 "Weather Condition: " + weather.getWeatherCondition(),
                                 "Humidity: " + weather.getHumidity() + "%",
-                                "Wind Speed: " + formatWindSpeed(weather.getWindSpeed()) + " "
-                                        + (useMetricUnits ? "m/s" : "mph"),
+                                "Wind Speed: " + formatWindSpeed(weather.getWindSpeed())
+                                        + (useMetricUnits ? " m/s" : " mph"),
                                 "Wind Direction: " + weather.getWindDirection() + "°",
                                 "Visibility: " + formatVisibility(weather.getVisibility())
                                         + (useMetricUnits ? " m" : " miles")
@@ -151,16 +137,11 @@ public class Main extends JFrame {
     }
 
     private String formatWindSpeed(double windSpeed) {
-        return useMetricUnits ? String.format("%.1f", windSpeed) : String.format("%.1f", windSpeed * 2.23694); // Convert
-                                                                                                               // m/s to
-                                                                                                               // mph
+        return useMetricUnits ? String.format("%.1f", windSpeed) : String.format("%.1f", windSpeed * 2.23694);
     }
 
     private String formatVisibility(double visibility) {
-        return useMetricUnits ? String.format("%.1f", visibility) : String.format("%.1f", visibility / 1609.34); // Convert
-                                                                                                                 // meters
-                                                                                                                 // to
-                                                                                                                 // miles
+        return useMetricUnits ? String.format("%.1f", visibility) : String.format("%.1f", visibility / 1609.34);
     }
 
     private void showError(String message) {

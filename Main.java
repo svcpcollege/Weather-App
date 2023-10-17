@@ -2,9 +2,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -16,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.Timer;
 
 public class Main extends JFrame {
 
@@ -24,6 +28,7 @@ public class Main extends JFrame {
     private JLabel loadingLabel;
     private List<JLabel> weatherLabels;
     private JToggleButton unitToggle;
+    private JLabel clockLabel;
 
     private boolean useMetricUnits = true; // Use metric units by default
 
@@ -69,10 +74,23 @@ public class Main extends JFrame {
         }
         mainPanel.add(weatherInfoPanel, BorderLayout.CENTER);
 
+        // Create and add the clock label
+        clockLabel = new JLabel();
+        mainPanel.add(clockLabel, BorderLayout.SOUTH);
+
         submitButton.addActionListener(this::fetchData);
         cityField.addActionListener(this::fetchDataOnEnter);
 
         add(mainPanel);
+
+        // Create and start the timer for the clock
+        Timer timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateClock();
+            }
+        });
+        timer.start();
     }
 
     private void toggleUnits(ActionEvent e) {
@@ -145,8 +163,14 @@ public class Main extends JFrame {
                                                                                                                  // miles
     }
 
-    private void showError(String message) {
+private void showError(String message) {
         JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void updateClock() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        String formattedDate = dateFormat.format(new Date());
+        clockLabel.setText("Current Time: " + formattedDate);
     }
 
     public static void main(String[] args) {

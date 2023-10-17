@@ -1,15 +1,11 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,162 +13,143 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 public class Main extends JFrame {
 
     private JTextField cityField;
-    private JLabel[] weatherLabels;
-    private JButton submitButton, clearButton;
+    private JButton submitButton;
     private JLabel loadingLabel;
-    private boolean isLoading = false;
+    private List<JLabel> weatherLabels;
+    private JToggleButton unitToggle;
+
+    private boolean useMetricUnits = true; // Use metric units by default
 
     public Main() {
         createUI();
-        setContentPane(createBackgroundPanel());
-        setTitle("OpenWeatherMap App");
-        setSize(new Dimension(400, 400));
+        setTitle("Weather App");
+        setSize(500, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
     private void createUI() {
-        cityField = new JTextField();
-        submitButton = new JButton("Submit");
-        clearButton = new JButton("Clear");
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(new Color(0, 153, 204));
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setBackground(new Color(0, 153, 204));
+
+        cityField = new JTextField(15);
+        submitButton = new JButton("Get Weather");
         loadingLabel = new JLabel("Loading...");
         loadingLabel.setForeground(Color.WHITE);
         loadingLabel.setVisible(false);
 
-        weatherLabels = new JLabel[8];
+        inputPanel.add(cityField);
+        inputPanel.add(submitButton);
+        inputPanel.add(loadingLabel);
+
+        // Create a toggle button for units
+        unitToggle = new JToggleButton("Use Metric Units");
+        unitToggle.addActionListener(this::toggleUnits);
+        inputPanel.add(unitToggle);
+
+        mainPanel.add(inputPanel, BorderLayout.NORTH);
+
+        JPanel weatherInfoPanel = new JPanel(new GridLayout(8, 1));
+        weatherLabels = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
-            weatherLabels[i] = new JLabel();
-            weatherLabels[i].setFont(new Font("Arial", Font.PLAIN, 17));
-            weatherLabels[i].setForeground(Color.WHITE);
+            JLabel label = new JLabel();
+            weatherLabels.add(label);
+            weatherInfoPanel.add(label);
         }
+        mainPanel.add(weatherInfoPanel, BorderLayout.CENTER);
 
-        clearButton.addActionListener(e -> clearWeatherInfo());
+        submitButton.addActionListener(this::fetchData);
+        cityField.addActionListener(this::fetchDataOnEnter);
 
-        ActionListener fetchActionListener = e -> {
-            if (e.getSource() == submitButton || e.getSource() == cityField) {
-                if (!isLoading) {
-                    isLoading = true;
-                    loadingLabel.setVisible(true);
-                    fetchData();
-                }
-            }
-        };
-
-        cityField.addActionListener(fetchActionListener);
-        submitButton.addActionListener(fetchActionListener);
+        add(mainPanel);
     }
 
-    private JPanel createBackgroundPanel() {
-        JPanel backgroundPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                GradientPaint gradient = new GradientPaint(0, 0, new Color(0, 153, 204), 0, getHeight(),
-                        new Color(0, 51, 102));
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setPaint(gradient);
-                g2d.fillRect(0, 0, getWidth(), getHeight());
-            }
-        };
-
-        backgroundPanel.setLayout(new GridBagLayout());
-        backgroundPanel.setForeground(Color.WHITE);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-
-        JLabel cityLabel = new JLabel("Enter city name: ");
-        cityLabel.setFont(new Font("Arial", Font.PLAIN, 20));
-        cityLabel.setForeground(Color.WHITE);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        backgroundPanel.add(cityLabel, gbc);
-
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
-        backgroundPanel.add(cityField, gbc);
-
-        gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 0;
-        backgroundPanel.add(submitButton, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        backgroundPanel.add(clearButton, gbc);
-
-        gbc.gridy = 3;
-        backgroundPanel.add(loadingLabel, gbc);
-
-        for (int i = 0; i < 8; i++) {
-            gbc.gridy = 4 + i;
-            backgroundPanel.add(weatherLabels[i], gbc);
+    private void toggleUnits(ActionEvent e) {
+        useMetricUnits = !useMetricUnits;
+        if (useMetricUnits) {
+            unitToggle.setText("Use Metric Units");
+        } else {
+            unitToggle.setText("Use Imperial Units");
         }
-
-        return backgroundPanel;
     }
 
-    private void fetchData() {
+    private void fetchData(ActionEvent e) {
         String city = cityField.getText();
 
-        SwingWorker<Void, Void> worker = new SwingWorker<>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                try {
-                    OpenWeatherMapAPI weather = new OpenWeatherMapAPI(city);
-                    String[] weatherData = {
-                            "Temperature: " + weather.getTemperature() + "°C",
-                            "Min Temperature: " + weather.getMinTemperature() + "°C",
-                            "Max Temperature: " + weather.getMaxTemperature() + "°C",
-                            "Weather Condition: " + weather.getWeatherCondition(),
-                            "Humidity: " + weather.getHumidity() + "%",
-                            "Wind Speed: " + weather.getWindSpeed() + "m/s",
-                            "Wind Direction: " + weather.getWindDirection() + "°",
-                            "Visibility: " + weather.getVisibility() + " meter"
-                    };
-                    for (int i = 0; i < 8; i++) {
-                        weatherLabels[i].setText(weatherData[i]);
-                    }
-                } catch (IOException ex) {
-                    showError("An error occurred while retrieving weather data.");
-                } catch (URISyntaxException ex) {
-                    showError("An error occurred while creating the URL.");
-                } finally {
-                    isLoading = false;
-                    loadingLabel.setVisible(false);
-                }
-                return null;
-            }
-        };
+        if (!loadingLabel.isVisible()) {
+            loadingLabel.setVisible(true);
 
-        worker.execute();
+            SwingWorker<Void, Void> worker = new SwingWorker<>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    try {
+                        OpenWeatherMapAPI weather = new OpenWeatherMapAPI(city);
+                        String[] weatherData = {
+                                "Temperature: " + formatTemperature(weather.getTemperature()) + "°",
+                                "Min Temperature: " + formatTemperature(weather.getMinTemperature()) + "°",
+                                "Max Temperature: " + formatTemperature(weather.getMaxTemperature()) + "°",
+                                "Weather Condition: " + weather.getWeatherCondition(),
+                                "Humidity: " + weather.getHumidity() + "%",
+                                "Wind Speed: " + formatWindSpeed(weather.getWindSpeed()) + " "
+                                        + (useMetricUnits ? "m/s" : "mph"),
+                                "Wind Direction: " + weather.getWindDirection() + "°",
+                                "Visibility: " + formatVisibility(weather.getVisibility())
+                                        + (useMetricUnits ? " m" : " miles")
+                        };
+                        for (int i = 0; i < 8; i++) {
+                            weatherLabels.get(i).setText(weatherData[i]);
+                        }
+                    } catch (IOException | URISyntaxException ex) {
+                        showError("An error occurred while retrieving weather data.");
+                    } finally {
+                        loadingLabel.setVisible(false);
+                    }
+                    return null;
+                }
+            };
+
+            worker.execute();
+        }
     }
 
-    private void clearWeatherInfo() {
-        cityField.setText("");
-        for (int i = 0; i < 8; i++) {
-            weatherLabels[i].setText("");
-        }
+    private void fetchDataOnEnter(ActionEvent e) {
+        fetchData(e);
+    }
+
+    private String formatTemperature(double temperature) {
+        return useMetricUnits ? String.format("%.1f°C", temperature)
+                : String.format("%.1f°F", (temperature * 9 / 5) + 32);
+    }
+
+    private String formatWindSpeed(double windSpeed) {
+        return useMetricUnits ? String.format("%.1f", windSpeed) : String.format("%.1f", windSpeed * 2.23694); // Convert
+                                                                                                               // m/s to
+                                                                                                               // mph
+    }
+
+    private String formatVisibility(double visibility) {
+        return useMetricUnits ? String.format("%.1f", visibility) : String.format("%.1f", visibility / 1609.34); // Convert
+                                                                                                                 // meters
+                                                                                                                 // to
+                                                                                                                 // miles
     }
 
     private void showError(String message) {
-        JOptionPane.showMessageDialog(null, message);
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Main());
+        SwingUtilities.invokeLater(Main::new);
     }
 }

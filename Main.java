@@ -56,7 +56,7 @@ public class Main extends JFrame {
         inputPanel.add(submitButton);
         inputPanel.add(loadingLabel);
 
-        unitToggle = new JToggleButton("Use Metric Units");
+        unitToggle = new JToggleButton("Metric Units");
         unitToggle.addActionListener(this::toggleUnits);
         inputPanel.add(unitToggle);
 
@@ -85,7 +85,7 @@ public class Main extends JFrame {
 
     private void toggleUnits(ActionEvent e) {
         useMetricUnits = !useMetricUnits;
-        unitToggle.setText(useMetricUnits ? "Use Metric Units" : "Use Imperial Units");
+        unitToggle.setText(useMetricUnits ? "Metric Units" : "Imperial Units");
     }
 
     private void fetchData(ActionEvent e) {

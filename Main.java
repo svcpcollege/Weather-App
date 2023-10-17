@@ -163,7 +163,7 @@ public class Main extends JFrame {
                                                                                                                  // miles
     }
 
-private void showError(String message) {
+    private void showError(String message) {
         JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 

@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
@@ -72,6 +74,8 @@ public class Main extends JFrame {
         mainPanel.add(weatherInfoPanel, BorderLayout.CENTER);
 
         clockLabel = new JLabel();
+        clockLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        clockLabel.setFont(new Font("Arial", Font.PLAIN, 24));
         mainPanel.add(clockLabel, BorderLayout.SOUTH);
 
         submitButton.addActionListener(this::fetchData);
@@ -151,7 +155,7 @@ public class Main extends JFrame {
     private void updateClock() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         String formattedDate = dateFormat.format(new Date());
-        clockLabel.setText("Current Time: " + formattedDate);
+        clockLabel.setText(formattedDate);
     }
 
     public static void main(String[] args) {

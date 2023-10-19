@@ -105,7 +105,7 @@ public class Main extends JFrame {
                 @Override
                 protected Void doInBackground() throws Exception {
                     try {
-                        OpenWeatherMapAPI weather = new OpenWeatherMapAPI(city);
+                        OpenWeatherMap weather = new OpenWeatherMap(city);
                         String[] weatherData = {
                                 "Temperature: " + formatTemperature(weather.getTemperature()) + "°",
                                 "Min Temperature: " + formatTemperature(weather.getMinTemperature()) + "°",

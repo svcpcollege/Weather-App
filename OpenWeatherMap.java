@@ -20,7 +20,7 @@ public class OpenWeatherMap {
      * @throws IOException if an I/O error occurs
      */
     public OpenWeatherMap(String city) throws IOException, URISyntaxException {
-        API_KEY = "6bacb232a0f59d0ec64765b01657a03e"; // Get your API key from https://openweathermap.org/api
+        API_KEY = "6bacb232a0f59d0ec64765b01657a03e";
         String encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8);
         API_URL = "https://api.openweathermap.org/data/2.5/weather?q=" + encodedCity + "&appid=" + API_KEY
                 + "&units=metric";
